@@ -20,10 +20,11 @@ import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 public class BoardMgr {
 
 	private DBConnectionMgr pool;
-	//private static final String  SAVEFOLDER = "C:/Jsp/myapp/WebContent/ch15/fileupload";
-	private static final String  SAVEFOLDER = "/Users/jeongjonguk/eclipse-workspace/myapp/WebContent/ch15/filestorage";
+	// private static final String SAVEFOLDER =
+	// "C:/Jsp/myapp/WebContent/ch15/fileupload";
+	private static final String SAVEFOLDER = "/Users/hhh73/StudioProjects/JSP_Servlet/jsptest/src/main/webapp/ch13/filestorage";
 	private static final String ENCTYPE = "UTF-8";
-	private static int MAXSIZE = 5*1024*1024;
+	private static int MAXSIZE = 5 * 1024 * 1024;
 
 	public BoardMgr() {
 		try {
@@ -34,8 +35,7 @@ public class BoardMgr {
 	}
 
 	// 게시판 리스트
-	public Vector<BoardBean> getBoardList(String keyField, String keyWord,
-			int start, int end) {
+	public Vector<BoardBean> getBoardList(String keyField, String keyWord, int start, int end) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -44,51 +44,34 @@ public class BoardMgr {
 		try {
 			con = pool.getConnection();
 			if (keyWord.equals("null") || keyWord.equals("")) {
-			  /*
-			   * SELECT * 
-            FROM(
-                  SELECT ROWNUM AS RNUM, A.*
-                      FROM ( 조회할 데이터의 쿼리 ) A
-                   WHERE ROWNUM <= '조회할 데이터의 최대 ROW'
-                )
-           WHERE RNUM > '조회할 데이터의 최소값-1';
-           
-          SELECT * 
-            FROM(
-                  SELECT ROWNUM AS RNUM, A.*
-                      FROM ( 조회할 데이터의 쿼리 ) A
-                   WHERE ROWNUM <= 10+20(동적으로 만들 경우를 대비해 시작순서와 데이터 갯수를 더해주는 식)
-                )
-           WHERE RNUM > 10;
-			   */
-				//sql = "select * from tblBoard order by ref desc, pos limit ?, ?";
-			  sql = "SELECT * \r\n" + 
-			      "        FROM(\r\n" + 
-			      "              SELECT ROWNUM AS RNUM, A.*\r\n" + 
-			      "                  FROM ( select * from tblBoard order by ref desc, pos ) A\r\n" + 
-			      "               WHERE ROWNUM <= ?+?\r\n" + 
-			      "            )\r\n" + 
-			      "       WHERE RNUM > ?";
-			  
-			         
+				/*
+				 * SELECT * FROM( SELECT ROWNUM AS RNUM, A.* FROM ( 조회할 데이터의 쿼리 ) A WHERE ROWNUM
+				 * <= '조회할 데이터의 최대 ROW' ) WHERE RNUM > '조회할 데이터의 최소값-1';
+				 * 
+				 * SELECT * FROM( SELECT ROWNUM AS RNUM, A.* FROM ( 조회할 데이터의 쿼리 ) A WHERE ROWNUM
+				 * <= 10+20(동적으로 만들 경우를 대비해 시작순서와 데이터 갯수를 더해주는 식) ) WHERE RNUM > 10;
+				 */
+				// sql = "select * from tblBoard order by ref desc, pos limit ?, ?";
+				sql = " SELECT * \r\n " 
+						+ " FROM(\r\n" + " SELECT ROWNUM AS RNUM, A.*\r\n"
+						+ "                FROM ( select * from tblBoard order by ref desc, pos ) A\r\n"
+						+ "                WHERE ROWNUM <= ?+?\r\n" + "            )\r\n" 
+						+ " WHERE RNUM > ?";
+
 				pstmt = con.prepareStatement(sql);
-			  pstmt.setInt(1, start);
-        pstmt.setInt(2, end);
-        pstmt.setInt(3, start);
+				pstmt.setInt(1, start);
+				pstmt.setInt(2, end);
+				pstmt.setInt(3, start);
 
 			} else {
-				//sql = "select * from  tblBoard where " + keyField + " like ? ";
-				//sql += "order by ref desc, pos limit ? , ?";
-				
-				
-				sql = " SELECT * \r\n" + 
-              " FROM(\r\n" + 
-              "   SELECT ROWNUM AS RNUM, A.*\r\n" + 
-              "   FROM ( select * from  tblBoard where " + keyField + " like ?  order by ref desc, pos ) A\r\n" + 
-              "   WHERE ROWNUM <= ?+?\r\n" + 
-              "   )\r\n" + 
-              " WHERE RNUM > ?";
-				
+				// sql = "select * from tblBoard where " + keyField + " like ? ";
+				// sql += "order by ref desc, pos limit ? , ?";
+
+				sql = " SELECT * \r\n" + " FROM(\r\n" + "   SELECT ROWNUM AS RNUM, A.*\r\n"
+						+ "   FROM ( select * from  tblBoard where " + keyField
+						+ " like ?  order by ref desc, pos ) A\r\n" + "   WHERE ROWNUM <= ?+?\r\n" + "   )\r\n"
+						+ " WHERE RNUM > ?";
+
 				pstmt = con.prepareStatement(sql);
 				pstmt.setString(1, "%" + keyWord + "%");
 				pstmt.setInt(2, start);
@@ -115,8 +98,8 @@ public class BoardMgr {
 		}
 		return vlist;
 	}
-	
-	//총 게시물수
+
+	// 총 게시물수
 	public int getTotalCount(String keyField, String keyWord) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -144,7 +127,7 @@ public class BoardMgr {
 		}
 		return totalCount;
 	}
-	
+
 	// 게시물 입력
 	public void insertBoard(HttpServletRequest req) {
 		Connection con = null;
@@ -165,8 +148,7 @@ public class BoardMgr {
 			File file = new File(SAVEFOLDER);
 			if (!file.exists())
 				file.mkdirs();
-			multi = new MultipartRequest(req, SAVEFOLDER,MAXSIZE, ENCTYPE,
-					new DefaultFileRenamePolicy());
+			multi = new MultipartRequest(req, SAVEFOLDER, MAXSIZE, ENCTYPE, new DefaultFileRenamePolicy());
 
 			if (multi.getFilesystemName("filename") != null) {
 				filename = multi.getFilesystemName("filename");
@@ -176,7 +158,7 @@ public class BoardMgr {
 			if (multi.getParameter("contentType").equalsIgnoreCase("TEXT")) {
 				content = UtilMgr.replace(content, "<", "&lt;");
 			}
-			sql  = " insert into tblBoard(num, name,content,subject,ref,pos,depth,regdate,pass,count,ip,filename,filesize)";
+			sql = " insert into tblBoard(num, name,content,subject,ref,pos,depth,regdate,pass,count,ip,filename,filesize)";
 			sql += " values(seq_tblBoard_no.nextval,?, ?, ?, ?, 0, 0, sysdate, ?, 0, ?, ?, ?)";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, multi.getParameter("name"));
@@ -194,7 +176,7 @@ public class BoardMgr {
 			pool.freeConnection(con, pstmt, rs);
 		}
 	}
-	
+
 	// 게시물 리턴
 	public BoardBean getBoard(int num) {
 		Connection con = null;
@@ -347,50 +329,47 @@ public class BoardMgr {
 		}
 	}
 
-	//파일 다운로드
-		public void downLoad(HttpServletRequest req, HttpServletResponse res,
-				JspWriter out, PageContext pageContext) {
-			try {
-				String filename = req.getParameter("filename");
-				File file = new File(UtilMgr.con(SAVEFOLDER + File.separator+ filename));
-				byte b[] = new byte[(int) file.length()];
-				res.setHeader("Accept-Ranges", "bytes");
-				String strClient = req.getHeader("User-Agent");
-				if (strClient.indexOf("MSIE6.0") != -1) {
-					res.setContentType("application/smnet;charset=utf-8");
-					res.setHeader("Content-Disposition", "filename=" + filename + ";");
-				} else {
-					res.setContentType("application/smnet;charset=utf-8");
-					res.setHeader("Content-Disposition", "attachment;filename="+ filename + ";");
-				}
-				out.clear();
-				out = pageContext.pushBody();
-				if (file.isFile()) {
-					BufferedInputStream fin = new BufferedInputStream(
-							new FileInputStream(file));
-					BufferedOutputStream outs = new BufferedOutputStream(
-							res.getOutputStream());
-					int read = 0;
-					while ((read = fin.read(b)) != -1) {
-						outs.write(b, 0, read);
-					}
-					outs.close();
-					fin.close();
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
+	// 파일 다운로드
+	public void downLoad(HttpServletRequest req, HttpServletResponse res, JspWriter out, PageContext pageContext) {
+		try {
+			String filename = req.getParameter("filename");
+			File file = new File(UtilMgr.con(SAVEFOLDER + File.separator + filename));
+			byte b[] = new byte[(int) file.length()];
+			res.setHeader("Accept-Ranges", "bytes");
+			String strClient = req.getHeader("User-Agent");
+			if (strClient.indexOf("MSIE6.0") != -1) {
+				res.setContentType("application/smnet;charset=utf-8");
+				res.setHeader("Content-Disposition", "filename=" + filename + ";");
+			} else {
+				res.setContentType("application/smnet;charset=utf-8");
+				res.setHeader("Content-Disposition", "attachment;filename=" + filename + ";");
 			}
+			out.clear();
+			out = pageContext.pushBody();
+			if (file.isFile()) {
+				BufferedInputStream fin = new BufferedInputStream(new FileInputStream(file));
+				BufferedOutputStream outs = new BufferedOutputStream(res.getOutputStream());
+				int read = 0;
+				while ((read = fin.read(b)) != -1) {
+					outs.write(b, 0, read);
+				}
+				outs.close();
+				fin.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		
-	//페이징 및 블럭 테스트를 위한 게시물 저장 메소드 
-	public void post1000(){
+	}
+
+	// 페이징 및 블럭 테스트를 위한 게시물 저장 메소드
+	public void post1000() {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		String sql = null;
 		try {
 			con = pool.getConnection();
 			sql = "insert into tblBoard(num, name,content,subject,ref,pos,depth,regdate,pass,count,ip,filename,filesize) ";
-			sql+=" values(seq_tblBoard_no.nextval, 'aaa', 'bbb', 'ccc', 0, 0, 0, sysdate, '1234',0, '127.0.0.1', '', 0) ";
+			sql += " values(seq_tblBoard_no.nextval, 'aaa', 'bbb', 'ccc', 0, 0, 0, sysdate, '1234',0, '127.0.0.1', '', 0) ";
 			pstmt = con.prepareStatement(sql);
 			for (int i = 0; i < 1000; i++) {
 				pstmt.executeUpdate();
@@ -401,8 +380,8 @@ public class BoardMgr {
 			pool.freeConnection(con, pstmt);
 		}
 	}
-	
-	//main
+
+	// main
 	public static void main(String[] args) {
 		new BoardMgr().post1000();
 		System.out.println("SUCCESS");

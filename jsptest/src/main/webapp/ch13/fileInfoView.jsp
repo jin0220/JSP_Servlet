@@ -6,7 +6,7 @@
 %>
 <%
 		//String saveFolder = "C:/Jsp/myapp/WebContent/ch13/filestorage/";
-    String saveFolder = "/Users/jeongjonguk/eclipse-workspace/myapp/WebContent/ch13/filestorage"; 
+    String saveFolder = "/Users/hhh73/StudioProjects/JSP_Servlet/jsptest/src/main/webapp/ch13/filestorage"; 
 		String encType = "UTF-8";
 		int maxSize = 10*1024*1024;//10M
 		
