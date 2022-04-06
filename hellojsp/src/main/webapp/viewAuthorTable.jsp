@@ -25,6 +25,13 @@
 </head>
 <body>
 	<table width="800" border="1">
+		<form name="insertForm" method="post" action="insertAuthor.jsp">
+		저자명: <input type="text" name="author_name" />
+		저자 설명: <input type="text" name="author_desc" />
+		<input type="button" value="저장" onclick="submit()"/>
+		</form>
+	</table>
+	<table width="800" border="1">
 		<tr>
 			<th>저자번호</th>
 			<th>저자</th>
