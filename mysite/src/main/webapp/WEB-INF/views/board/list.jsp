@@ -49,7 +49,7 @@
 				</table>
 				<div class="pager">
 					<ul>
-						<li><a href="/mysite/board?a=list&pageNum=${currentPage-1}">◀</a></li>
+						<li><a href="/mysite/board?a=${null eq a ? 'list' : 'search' }&pageNum=${currentPage-1}&kwd=${kwd}">◀</a></li>
 						
 						<c:forEach var="i" begin="1" end="${totalPage }">
 							<c:choose>
@@ -58,12 +58,12 @@
 					         	</c:when>
 					         	
 					         	<c:otherwise>
-					            	<li><a href="/mysite/board?a=list&pageNum=${i}">${i}</a></li>
+					            	<li><a href="/mysite/board?a=${null eq a ? 'list' : 'search' }&pageNum=${i}&kwd=${kwd}">${i}</a></li>
 					         	</c:otherwise>
 							</c:choose>
 						</c:forEach>
 						
-						<li><a href="/mysite/board?a=list&pageNum=${currentPage+1}">▶</a></li>
+						<li><a href="/mysite/board?a=${null eq a ? 'list' : 'search' }&pageNum=${currentPage+1}&kwd=${kwd}">▶</a></li>
 					</ul>
 				</div>				
 				<c:if test="${authUser != null }">

@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -223,17 +224,47 @@ public class BoardServlet extends HttpServlet {
 
 		} else if ("search".equals(actionName)) {
 			BoardDao dao = new BoardDaoImpl();
-			List<BoardVo> list = dao.search(request.getParameter("kwd"));
-
-			System.out.println(list.toString());
-
-			// 리스트 화면에 보내기
+			
+			// 한 페이지에 출력될 리스트 개수
+			int pageSize = 10;
+			
+			// 현재 페이지 정보 설정
+			String pageNum = request.getParameter("pageNum");
+			if(pageNum == null) {
+				pageNum = "1";
+			}
+			System.out.println("pageNum" + pageNum);
+			
+			
+			// 각 페이지의 첫행번호를 계산
+			int currentPage = Integer.parseInt(pageNum);
+			int startRow = (currentPage-1) * pageSize + 1;
+			
+			List<BoardVo> list = dao.search(request.getParameter("kwd"), startRow, pageSize * Integer.parseInt(pageNum));
+			
+			int cnt = dao.searchCount(request.getParameter("kwd"));
+			System.out.println(cnt);
+			
 			request.setAttribute("list", list);
+			if(cnt % pageSize == 0) {
+				request.setAttribute("totalPage", cnt / pageSize);
+			}
+			else {
+				request.setAttribute("totalPage", cnt / pageSize + 1);
+			}
+			request.setAttribute("currentPage", currentPage);
+			request.setAttribute("a", "search");
+			request.setAttribute("kwd", request.getParameter("kwd"));
+			
 			WebUtil.forward(request, response, "/WEB-INF/views/board/list.jsp");
+			
 		} else if ("download".equals(actionName)) { 
 			String fileName = request.getParameter("fileName");
+			
 			System.out.println(ATTACHES_DIR + File.separator + fileName);
+			
 			File file = new File(ATTACHES_DIR + File.separator + fileName);
+			
 			if(file.exists()) {
 				OutputStream os = null;
 				FileInputStream is = null;
@@ -246,7 +277,10 @@ public class BoardServlet extends HttpServlet {
 					encodedName = encodedName.replaceAll("\\+"," ");
 				}
 				response.setContentType("application/octet-stream");
-				response.setHeader("Content-Dispostion", "attachment;filename=" + fileName + ";");
+				response.setHeader("Content-Disposition", "attachment;filename=" + fileName + ";");
+//				response.setHeader("Content-Disposition","attachment;filename=\""+file.getName()+"\"");
+
+
 				try {
 					os = response.getOutputStream();
 					is = new FileInputStream(file);

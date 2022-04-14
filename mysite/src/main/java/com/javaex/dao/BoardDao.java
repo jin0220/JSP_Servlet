@@ -10,6 +10,7 @@ public interface BoardDao {
 	public int delete(int no);       // 게시물 삭제
 	public int update(BoardVo vo);   // 게시물 수정
 	public int update_hit(BoardVo vo); // 게시물 조회수
-	public List<BoardVo> search(String kwd); // 게시물 검색
+	public List<BoardVo> search(String kwd, int startRow, int pageSize); // 게시물 검색
 	public List<BoardVo> getBoardList(int startRow, int pageSize); // 페이징 처리
+	public int searchCount(String kwd); // 검색 게시물 개수
 }
