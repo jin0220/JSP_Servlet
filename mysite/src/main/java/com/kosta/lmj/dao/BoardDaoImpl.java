@@ -1,4 +1,4 @@
-package com.javaex.dao;
+package com.kosta.lmj.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.javaex.vo.BoardVo;
+import com.kosta.lmj.vo.BoardVo;
 
 public class BoardDaoImpl implements BoardDao {
 	private Connection getConnection() throws SQLException {
@@ -261,6 +261,7 @@ public class BoardDaoImpl implements BoardDao {
 		return count;
 	}
 
+	// 조회수 올리기
 	public int update_hit(BoardVo vo) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -301,6 +302,7 @@ public class BoardDaoImpl implements BoardDao {
 		return count;
 	}
 	
+	// 검색할 때 검색된 데이터가 몇 건인지 반환 - 검색시 페이징 처리를 위해 사용
 	public int searchCount(String kwd) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -352,6 +354,7 @@ public class BoardDaoImpl implements BoardDao {
 		return count; 
 	}
 
+	// 검색 기능 사용시 입력된 키워드로 이름, 제목, 내용, 날짜, 파일명으로 검색 가능하게 구현
 	public List<BoardVo> search(String kwd, int startRow, int pageSize) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -382,6 +385,7 @@ public class BoardDaoImpl implements BoardDao {
 			pstmt.setString(5, "%" + kwd + "%");
 			pstmt.setString(6, "%" + kwd + "%");
 			
+			// 페이징 처리시 필요
 			pstmt.setInt(7, startRow);
 			pstmt.setInt(8, pageSize);
 
@@ -421,6 +425,7 @@ public class BoardDaoImpl implements BoardDao {
 		return list;
 	}
 
+	// 페이징 처리 쿼리문
 	public List<BoardVo> getBoardList(int startRow, int pageSize) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;

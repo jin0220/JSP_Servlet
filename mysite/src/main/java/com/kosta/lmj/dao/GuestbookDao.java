@@ -1,8 +1,8 @@
-package com.javaex.dao;
+package com.kosta.lmj.dao;
 
 import java.util.List;
 
-import com.javaex.vo.GuestbookVo;
+import com.kosta.lmj.vo.GuestbookVo;
 
 public interface GuestbookDao {
   

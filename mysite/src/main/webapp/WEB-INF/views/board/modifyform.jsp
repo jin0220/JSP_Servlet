@@ -37,8 +37,8 @@
 						<tr>
 							<td class="label">파일첨부</td>
 							<td>
-								파일1 : <input type="file" name="file1" value="${boardVo.file1 }">${boardVo.file1 }<br>
-            					파일2 : <input type="file" name="file2" value="${boardVo.file2 }">${boardVo.file2 }<br>
+								파일1 : <input type="file" name="file1">${boardVo.file1 }<br>
+            					파일2 : <input type="file" name="file2">${boardVo.file2 }<br>
 							</td>
 						</tr>
 					</table>

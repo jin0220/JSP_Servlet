@@ -1,4 +1,4 @@
-package com.javaex.controller;
+package com.kosta.lmj.controller;
 
 import java.io.IOException;
 

@@ -49,7 +49,12 @@
 				</table>
 				<div class="pager">
 					<ul>
-						<li><a href="/mysite/board?a=${null eq a ? 'list' : 'search' }&pageNum=${currentPage-1}&kwd=${kwd}">◀</a></li>
+						<%-- a=${null eq a ? 'list' : 'search' } -> 검색 시에 search가 서블릿으로 넘어가 처리 --%>
+						<%-- pageNum=${currentPage} -> 이동할 페이지 번호 --%>
+						<%-- kwd=${kwd} -> 초기화되는 키워드 값을 막기 위해 사용 --%>
+						<c:if test="${currentPage != 1}">
+							<li><a href="/mysite/board?a=${null eq a ? 'list' : 'search' }&pageNum=${currentPage-1}&kwd=${kwd}">◀</a></li>
+						</c:if>
 						
 						<c:forEach var="i" begin="1" end="${totalPage }">
 							<c:choose>
@@ -63,7 +68,9 @@
 							</c:choose>
 						</c:forEach>
 						
-						<li><a href="/mysite/board?a=${null eq a ? 'list' : 'search' }&pageNum=${currentPage+1}&kwd=${kwd}">▶</a></li>
+						<c:if test="${currentPage != totalPage}">	
+							<li><a href="/mysite/board?a=${null eq a ? 'list' : 'search' }&pageNum=${currentPage+1}&kwd=${kwd}">▶</a></li>
+						</c:if>
 					</ul>
 				</div>				
 				<c:if test="${authUser != null }">

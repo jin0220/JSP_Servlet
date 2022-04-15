@@ -1,4 +1,4 @@
-package com.javaex.controller;
+package com.kosta.lmj.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,11 +20,11 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
-import com.javaex.dao.BoardDao;
-import com.javaex.dao.BoardDaoImpl;
-import com.javaex.util.WebUtil;
-import com.javaex.vo.BoardVo;
-import com.javaex.vo.UserVo;
+import com.kosta.lmj.dao.BoardDao;
+import com.kosta.lmj.dao.BoardDaoImpl;
+import com.kosta.lmj.util.WebUtil;
+import com.kosta.lmj.vo.BoardVo;
+import com.kosta.lmj.vo.UserVo;
 
 @WebServlet("/board")
 public class BoardServlet extends HttpServlet {
@@ -54,6 +54,7 @@ public class BoardServlet extends HttpServlet {
 //			request.setAttribute("list", list);
 //			WebUtil.forward(request, response, "/WEB-INF/views/board/list.jsp");
 			
+			// 페이징
 			BoardDao dao = new BoardDaoImpl();
 			int cnt = dao.getList().size();
 			
@@ -69,19 +70,24 @@ public class BoardServlet extends HttpServlet {
 			
 			
 			// 각 페이지의 첫행번호를 계산
-			int currentPage = Integer.parseInt(pageNum);
-			int startRow = (currentPage-1) * pageSize + 1;
+			int currentPage = Integer.parseInt(pageNum); // 현재 페이지 번호
+			int startRow = (currentPage-1) * pageSize + 1; // 현재 페이지의 결과 첫 행의 행번호
 			
+			// 페이징 처리를 위해 시작 행 번호와 마지막행 번호를 전달
 			List<BoardVo> list = dao.getBoardList(startRow, pageSize * Integer.parseInt(pageNum));
 			System.out.println(list.toString());
 			
-			request.setAttribute("list", list);
+			request.setAttribute("list", list); // 현재 페이지의 게시물 데이터 전달
+			
+			// 해당 페이지의 게시물을 view로 전달
 			if(cnt % pageSize == 0) {
 				request.setAttribute("totalPage", cnt / pageSize);
 			}
 			else {
 				request.setAttribute("totalPage", cnt / pageSize + 1);
 			}
+			
+			// 현재 페이지 번호 전달
 			request.setAttribute("currentPage", currentPage);
 			
 			WebUtil.forward(request, response, "/WEB-INF/views/board/list.jsp");
@@ -141,12 +147,10 @@ public class BoardServlet extends HttpServlet {
 			 
 	        File attachesDir = new File(ATTACHES_DIR);
 	 
-	 
 	        DiskFileItemFactory fileItemFactory = new DiskFileItemFactory(); // 업로드의 데이터를 메모리에 임시로 저장할 크기를 만듦
 	        fileItemFactory.setRepository(attachesDir); // 업로드 저장파일을 임시로 저장할 폴더 생성
 	        fileItemFactory.setSizeThreshold(LIMIT_SIZE_BYTES); // 업로드 메모리 크기를 지정
 	        ServletFileUpload fileUpload = new ServletFileUpload(fileItemFactory); // 파일 업로드 핸들러
-	        
 	        
 	        String[] file = new String[2];
 	        int i = 0;
@@ -166,14 +170,17 @@ public class BoardServlet extends HttpServlet {
 	                    	content = item.getString(CHARSET);
 	                    }
 	                } else {
-	                    System.out.printf("파라미터 명 : %s, 파일 명 : %s,  파일 크기 : %s bytes \n", item.getFieldName(),
-	                            item.getName(), item.getSize());
+//	                    System.out.printf("파라미터 명 : %s, 파일 명 : %s,  파일 크기 : %s bytes \n", item.getFieldName(),
+//	                            item.getName(), item.getSize());
 	                    if (item.getSize() > 0) {
 	                        String separator = File.separator;
 	                        int index =  item.getName().lastIndexOf(separator);
 	                        file[i] = item.getName().substring(index  + 1);
-	                        System.out.println("index : "+ i +" fileName " +file[i]);
+	                        
+//	                        System.out.println("index : "+ i +" fileName " +file[i]);
+	                        
 	                        File uploadFile = new File(ATTACHES_DIR +  separator + file[i]);
+	                        
 	                        if(uploadFile.exists()) { // 중복된 파일명이 존재할 경우
 	                        	boolean check = true;
 	                        	
@@ -196,9 +203,7 @@ public class BoardServlet extends HttpServlet {
 	        	System.out.println("에러");
 	            e.printStackTrace();
 	        }
-
-	        
-	        
+	
 			UserVo authUser = getAuthUser(request);
 			
 			int userNo = authUser.getNo();
@@ -223,13 +228,14 @@ public class BoardServlet extends HttpServlet {
 			WebUtil.redirect(request, response, "/mysite/board?a=list");
 
 		} else if ("search".equals(actionName)) {
+			// 검색 결과 및 페이징 처리 구현
 			BoardDao dao = new BoardDaoImpl();
 			
 			// 한 페이지에 출력될 리스트 개수
 			int pageSize = 10;
 			
 			// 현재 페이지 정보 설정
-			String pageNum = request.getParameter("pageNum");
+			String pageNum = request.getParameter("pageNum"); // 버튼을 누르면 페이지 값 들어옴.
 			if(pageNum == null) {
 				pageNum = "1";
 			}
@@ -237,38 +243,51 @@ public class BoardServlet extends HttpServlet {
 			
 			
 			// 각 페이지의 첫행번호를 계산
-			int currentPage = Integer.parseInt(pageNum);
-			int startRow = (currentPage-1) * pageSize + 1;
+			int currentPage = Integer.parseInt(pageNum); // 현재 페이지 번호
+			int startRow = (currentPage-1) * pageSize + 1; // 현재 페이지의 결과 첫 행의 행번호
 			
+			// 페이징 처리를 위해 키워드와 시작 행 번호와 마지막행 번호를 전달
 			List<BoardVo> list = dao.search(request.getParameter("kwd"), startRow, pageSize * Integer.parseInt(pageNum));
 			
+			// 페이지 버튼을 만들기 위해 검색 결과 게시물 개수를 받아옴.
 			int cnt = dao.searchCount(request.getParameter("kwd"));
 			System.out.println(cnt);
 			
+			// 해당 페이지의 게시물을 view로 전달
 			request.setAttribute("list", list);
+			
+			// 만들어져야할 페이지 버튼의 개수를 view로 전달
 			if(cnt % pageSize == 0) {
 				request.setAttribute("totalPage", cnt / pageSize);
 			}
 			else {
 				request.setAttribute("totalPage", cnt / pageSize + 1);
 			}
-			request.setAttribute("currentPage", currentPage);
-			request.setAttribute("a", "search");
-			request.setAttribute("kwd", request.getParameter("kwd"));
+			
+			request.setAttribute("currentPage", currentPage); // view에서 현재 페이지 번호를 전달
+			request.setAttribute("a", "search"); // 서블릿에서 list와 search 부분의 페이징 처리를
+												 // 따로 구현했기 때문에 list와 search를 구분하기 위해 view에 전달
+			request.setAttribute("kwd", request.getParameter("kwd")); // 검색을 하게되면 input의 값이 초기화가 되기 때문에 
+																	  // 페이지 버튼을 누르면 게시물 조회가 제대로 이루어지지 않음
+																	  // 따라서 키워드를 전달하여 키워드 값이 초기화 되는 것을 막음.
 			
 			WebUtil.forward(request, response, "/WEB-INF/views/board/list.jsp");
 			
 		} else if ("download".equals(actionName)) { 
+			// 파일 다운로드 구현
 			String fileName = request.getParameter("fileName");
 			
-			System.out.println(ATTACHES_DIR + File.separator + fileName);
+//			System.out.println(ATTACHES_DIR + File.separator + fileName);
 			
 			File file = new File(ATTACHES_DIR + File.separator + fileName);
 			
+			// 다운로드할 파일이 존재할 시 실행
 			if(file.exists()) {
 				OutputStream os = null;
 				FileInputStream is = null;
 				String encodedName = null;
+				
+				// 브라우저마다 인코딩이 다를 수 있기 때문에 사용
 				if(request.getHeader("User-Agent").contains("Firefox")) {
 					encodedName = new String(fileName.getBytes("utf-8"),"ios-8859-1");
 				}
@@ -279,7 +298,6 @@ public class BoardServlet extends HttpServlet {
 				response.setContentType("application/octet-stream");
 				response.setHeader("Content-Disposition", "attachment;filename=" + fileName + ";");
 //				response.setHeader("Content-Disposition","attachment;filename=\""+file.getName()+"\"");
-
 
 				try {
 					os = response.getOutputStream();

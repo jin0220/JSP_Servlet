@@ -1,4 +1,4 @@
-package com.javaex.vo;
+package com.kosta.lmj.vo;
 
 public class UserVo{
 	private int no;

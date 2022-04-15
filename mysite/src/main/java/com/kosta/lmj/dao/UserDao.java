@@ -1,6 +1,6 @@
-package com.javaex.dao;
+package com.kosta.lmj.dao;
 
-import com.javaex.vo.UserVo;
+import com.kosta.lmj.vo.UserVo;
 
 public interface UserDao {
 

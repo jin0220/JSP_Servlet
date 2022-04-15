@@ -1,4 +1,4 @@
-package com.javaex.dao;
+package com.kosta.lmj.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.javaex.vo.UserVo;
+import com.kosta.lmj.vo.UserVo;
 
 public class UserDaoImpl implements UserDao {
 
