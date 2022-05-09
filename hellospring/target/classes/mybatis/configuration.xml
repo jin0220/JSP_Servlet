@@ -7,11 +7,12 @@
   
   <typeAliases>
     <typeAlias alias="guestbooklist" type="com.javaex.vo.GuestbookVo"></typeAlias>
+    <typeAlias alias="emaillist" type="com.javaex.vo.EmaillistVo"></typeAlias>
   </typeAliases>
   
   <mappers>
     <mapper resource="mybatis/mappers/guestbook.xml" />
-    <!-- mapper resource="mybatis/mappers/emaillist.xml" /> -->
+    <mapper resource="mybatis/mappers/emaillist.xml" />
   </mappers>
 
 </configuration>

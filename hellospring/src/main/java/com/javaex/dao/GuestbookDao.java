@@ -11,16 +11,20 @@ import com.javaex.vo.GuestbookVo;
 
 @Repository
 public class GuestbookDao {
-  
-  @Autowired
-  private SqlSession sqlSession;
 
-  
-  public List<GuestbookVo> getList(){
-    System.out.println("----> sqlSession.selectList()");
-    System.out.println(sqlSession);
+	@Autowired
+	private SqlSession sqlSession;
 
-    return sqlSession.selectList("GuestBookXml.selectList");
-  }
-  
+	public List<GuestbookVo> getList() {
+		System.out.println("----> sqlSession.selectList()");
+		System.out.println(sqlSession);
+
+		return sqlSession.selectList("GuestBookXml.selectList");
+	}
+
+	public int insert(GuestbookVo vo) {
+		System.out.println(vo);
+		return sqlSession.insert("GuestBookXml.insert", vo);
+	}
+
 }

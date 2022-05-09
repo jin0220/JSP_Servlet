@@ -16,5 +16,11 @@
     order by reg_date desc
   </select>
   
+  <insert id="insert" parameterType="com.javaex.vo.GuestbookVo">
+	<![CDATA[
+		insert into guestbook
+		values(seq_guestbook_no.nextval, #{name}, #{password}, #{content}, sysdate)
+	]]>
+	</insert>
 
 </mapper>

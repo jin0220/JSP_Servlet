@@ -53,7 +53,8 @@
 	</bean>
 	
 	
-	<!--  --><bean id="guestbookDao" class="com.javaex.dao.GuestbookDao" />
+	<bean id="guestbookDao" class="com.javaex.dao.GuestbookDao" />
+	<bean id="emaillistDao" class="com.javaex.dao.EmaillistDao" />
 
 </beans>
 
